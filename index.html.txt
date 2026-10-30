@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laith AI - الذكاء الاصطناعي الفائق</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font - Cairo & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Highlight.js for code formatting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#e0edff',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            glow: '#3b82f6'
+                        },
+                        dark: {
+                            bg: '#090d16',
+                            card: '#111827',
+                            chatBg: '#0b1120',
+                            border: '#1e293b',
+                            userBubble: '#1d4ed8',
+                            aiBubble: '#1e293b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px -5px rgba(59, 130, 246, 0.5)',
+                        'glow-lg': '0 0 35px -5px rgba(59, 130, 246, 0.6)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #090d16;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+
+        /* Pulse glowing effect */
+        .glow-pulse {
+            animation: pulse-glow 2.5s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+        }
+
+        /* Typing indicator dots */
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Markdown styling inside AI messages */
+        .prose pre {
+            background-color: #0d1117 !important;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #30363d;
+            direction: ltr;
+            text-align: left;
+        }
+        .prose code {
+            font-family: monospace;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+        .prose pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .prose p {
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+        }
+        .prose ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 0.75rem; }
+        .prose ol { list-style-type: decimal; padding-right: 1.5rem; margin-bottom: 0.75rem; }
+        .prose h1, .prose h2, .prose h3 { font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; color: #60a5fa; }
+        .prose a { color: #3b82f6; text-decoration: underline; }
+        .prose blockquote { border-right: 4px solid #3b82f6; padding-right: 1rem; color: #9ca3af; font-style: italic; }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-100 h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-dark-card/80 backdrop-blur-md border-b border-dark-border sticky top-0 z-50 px-4 py-3 sm:px-6">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <!-- Brand & Status -->
+            <div class="flex items-center gap-3">
+                <div class="relative flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-glow glow-pulse">
+                        L
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-xl tracking-wide bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+                            LAITH AI
+                        </h1>
+                        <span class="bg-brand-500/10 text-brand-500 text-xs px-2 py-0.5 rounded-full font-bold border border-brand-500/20">
+                            v3.0 Ultra
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-400 flex items-center gap-1">
+                        <i class="fa-solid fa-brain text-cyan-400 text-[10px]"></i>
+                        مربوط مع Google Search & Gemini 3
+                    </p>
+                </div>
+            </div>
+
+            <!-- Controls / Settings -->
+            <div class="flex items-center gap-3">
+                <!-- Search Integration Toggle -->
+                <button id="searchToggleBtn" onclick="toggleSearch()" class="flex items-center gap-2 bg-dark-bg/80 border border-dark-border px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-300 hover:text-white transition hover:border-brand-500/50">
+                    <i id="searchIcon" class="fa-solid fa-globe text-gray-400"></i>
+                    <span class="hidden sm:inline">بحث جوجل:</span>
+                    <span id="searchStatusText" class="text-gray-400">مُغلق</span>
+                </button>
+
+                <!-- Clear Chat Button -->
+                <button onclick="clearChat()" class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition" title="مسح المحادثة">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto flex flex-col p-2 sm:p-4 overflow-hidden">
+        
+        <!-- Chat Area -->
+        <div id="chatContainer" class="flex-1 overflow-y-auto space-y-4 px-2 py-4">
+            
+            <!-- Welcome Card / Initial State -->
+            <div id="welcomeCard" class="text-center my-8 p-6 sm:p-10 rounded-2xl bg-gradient-to-b from-dark-card to-dark-bg border border-dark-border shadow-xl max-w-2xl mx-auto">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white text-3xl shadow-glow">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">
+                    أهلاً بك في <span class="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">LAITH AI</span>
+                </h2>
+                <p class="text-gray-400 text-sm sm:text-base mb-6 leading-relaxed">
+                    مساعدك الذكي الفائق المعرفة. أستطيع الإجابة عن كافة أسئلتك، كتابة الأكواد البرمجية، تحليل البيانات، والبحث الحقيقي في ويب Google.
+                </p>
+
+                <!-- Quick Prompt Suggestions -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-right">
+                    <button onclick="usePrompt('ابحث عن أحدث أخبار وتطورات الذكاء الاصطناعي اليوم')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-newspaper text-cyan-400 group-hover:scale-110 transition"></i>
+                        <span>أحدث أخبار الذكاء الاصطناعي اليوم</span>
+                    </button>
+                    <button onclick="usePrompt('اشرح لي مفهوم الحوسبة الكمومية بطريقة بسيطة جداً')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-atom text-purple-400 group-hover:scale-110 transition"></i>
+                        <span>شرح مفهوم الحوسبة الكمومية</span>
+                    </button>
+                    <button onclick="usePrompt('اكتب لي كود HTML/JS لصفحة حاسبة أنيقة وعصرية')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-code text-emerald-400 group-hover:scale-110 transition"></i>
+                        <span>كتابة كود برمجي تطبيقي</span>
+                    </button>
+                    <button onclick="usePrompt('اكتب لي قصيدة شِعرية أو قصة قصيرة مشوقة')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-feather text-amber-400 group-hover:scale-110 transition"></i>
+                        <span>كتابة قصة أو محتوى إبداعي</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages will be appended here dynamically -->
+        </div>
+
+        <!-- Input Box Area -->
+        <div class="mt-2 bg-dark-card border border-dark-border rounded-2xl p-2 sm:p-3 shadow-2xl relative">
+            
+            <!-- Quick Action Bar -->
+            <div id="quickBar" class="flex items-center gap-2 px-2 pb-2 overflow-x-auto text-xs text-gray-400 scrollbar-none">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-500">اقتراحات:</span>
+                <button onclick="usePrompt('تلخيص المقالات')" class="whitespace-nowrap bg-dark-bg hover:bg-gray-800 px-2.5 py-1 rounded-md border border-dark-border transition">📝 تلخيص</button>
+                <button onclick="usePrompt('ترجم النص التالي للعربية مع تدقيق لغوي')" class="whitespace-nowrap bg-dark-bg hover:bg-gray-800 px-2.5 py-1 rounded-md border border-dark-border transition">🌐 ترجمة احترافية</button>
+                <button onclick="usePrompt('صحح هذا الكود واكتشف الأخطاء')" class="whitespace-nowrap bg-dark-bg hover:bg-gray-800 px-2.5 py-1 rounded-md border border-dark-border transition">🐛 تصحيح كود</button>
+            </div>
+
+            <!-- Text Form -->
+            <form id="chatForm" onsubmit="handleSend(event)" class="flex items-end gap-2">
+                <textarea 
+                    id="userInput" 
+                    rows="1" 
+                    placeholder="اسأل LAITH AI أي شيء..." 
+                    class="w-full bg-dark-bg text-gray-100 placeholder-gray-500 text-sm sm:text-base rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none max-h-32 min-h-[48px] border border-dark-border"
+                    onkeydown="handleKeyDown(event)"
+                    oninput="autoResizeTextarea(this)"></textarea>
+                
+                <button 
+                    type="submit" 
+                    id="sendBtn"
+                    class="h-12 w-12 rounded-xl bg-gradient-to-r from-brand-600 to-cyan-500 text-white font-bold flex items-center justify-center shadow-glow hover:opacity-90 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                    <i class="fa-solid fa-paper-plane text-base"></i>
+                </button>
+            </form>
+
+            <div class="flex items-center justify-between px-3 mt-2 text-[11px] text-gray-500">
+                <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved text-brand-500"></i>
+                    محمي بنظام Gemini AI الذكي
+                </span>
+                <span>اضغط Shift + Enter للسطر الجديد</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-xs shadow-lg border border-gray-700 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg">تم النسخ بنجاح</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // System Config
+        const SYSTEM_INSTRUCTION = `أنت الذكاء الاصطناعي "Laith AI" (ليث ذكاء اصطناعي)، نموذج ذكي للغاية ومتقدم جداً يمتلك معرفة واسعة وشاملة بكل شيء في العالم، وتعتمد على أفضل التقنيات المتاحة.
+تتميز بالآتي:
+1. إجابات دقيقة ومفصلة وشديدة الذكاء باللغة العربية (أو باللغة التي يسألك بها المستخدم).
+2. عند كتابة الأكواد البرمجية، توفر كوداً كاملاً، حديثاً وخالياً من الأخطاء مع شرح المبادئ.
+3. أسلوبك محترم، واثق، وسريع الفهم.
+4. تستخدم التنسيق الجميل بواسطة Markdown (عناوين، نقاط، جداول، وأكواد مصفوفة بشكل ممتاذ).
+5. دائماً تذكر أنك Laith AI عند سؤالك عن هويتك.`;
+
+        let isSearchEnabled = true; // Default ON
+        let chatHistory = [];
+        let isGenerating = false;
+
+        // Init marked setup
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true
+        });
+
+        window.onload = function() {
+            updateSearchUI();
+        };
+
+        function toggleSearch() {
+            isSearchEnabled = !isSearchEnabled;
+            updateSearchUI();
+            showToast(isSearchEnabled ? "تم تفعيل البحث المباشر مع Google" : "تم إيقاف البحث المباشر");
+        }
+
+        function updateSearchUI() {
+            const btn = document.getElementById('searchToggleBtn');
+            const icon = document.getElementById('searchIcon');
+            const status = document.getElementById('searchStatusText');
+
+            if (isSearchEnabled) {
+                btn.classList.add('border-brand-500', 'bg-brand-500/10');
+                icon.className = 'fa-solid fa-globe text-cyan-400 animate-pulse';
+                status.innerText = 'مُصرح';
+                status.className = 'text-cyan-400 font-bold';
+            } else {
+                btn.classList.remove('border-brand-500', 'bg-brand-500/10');
+                icon.className = 'fa-solid fa-globe text-gray-500';
+                status.innerText = 'معطل';
+                status.className = 'text-gray-500';
+            }
+        }
+
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+            }
+        }
+
+        function usePrompt(text) {
+            const input = document.getElementById('userInput');
+            input.value = text;
+            autoResizeTextarea(input);
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+
+        function clearChat() {
+            chatHistory = [];
+            const container = document.getElementById('chatContainer');
+            container.innerHTML = '';
+            
+            // Re-add Welcome card
+            const welcomeHtml = `
+            <div id="welcomeCard" class="text-center my-8 p-6 sm:p-10 rounded-2xl bg-gradient-to-b from-dark-card to-dark-bg border border-dark-border shadow-xl max-w-2xl mx-auto">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white text-3xl shadow-glow">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">
+                    أهلاً بك في <span class="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">LAITH AI</span>
+                </h2>
+                <p class="text-gray-400 text-sm sm:text-base mb-6 leading-relaxed">
+                    مساعدك الذكي الفائق المعرفة. أستطيع الإجابة عن كافة أسئلتك، كتابة الأكواد البرمجية، تحليل البيانات، والبحث الحقيقي في ويب Google.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-right">
+                    <button onclick="usePrompt('ابحث عن أحدث أخبار وتطورات الذكاء الاصطناعي اليوم')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-newspaper text-cyan-400 group-hover:scale-110 transition"></i>
+                        <span>أحدث أخبار الذكاء الاصطناعي اليوم</span>
+                    </button>
+                    <button onclick="usePrompt('اشرح لي مفهوم الحوسبة الكمومية بطريقة بسيطة جداً')" class="p-3 bg-dark-bg hover:bg-brand-500/10 border border-dark-border hover:border-brand-500/40 rounded-xl text-xs text-gray-300 hover:text-white transition flex items-center gap-3 group">
+                        <i class="fa-solid fa-atom text-purple-400 group-hover:scale-110 transition"></i>
+                        <span>شرح مفهوم الحوسبة الكمومية</span>
+                    </button>
+                </div>
+            </div>`;
+            container.innerHTML = welcomeHtml;
+            showToast("تم إخلاء الشاشة وتصفير المحادثة");
+        }
+
+        async function handleSend(e) {
+            e.preventDefault();
+            if (isGenerating) return;
+
+            const inputEl = document.getElementById('userInput');
+            const message = inputEl.value.trim();
+            if (!message) return;
+
+            // Remove Welcome Card if present
+            const welcomeCard = document.getElementById('welcomeCard');
+            if (welcomeCard) welcomeCard.remove();
+
+            // Render User Message
+            appendUserMessage(message);
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+
+            // Show Thinking/Loading Bubble
+            const loadingId = appendLoadingBubble();
+            isGenerating = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                // Call Gemini API
+                const aiResponse = await callGeminiAPI(message);
+                
+                // Remove Loading Bubble
+                removeBubble(loadingId);
+
+                // Render AI Message
+                appendAIMessage(aiResponse.text, aiResponse.sources);
+
+                // Save History
+                chatHistory.push({ role: 'user', parts: [{ text: message }] });
+                chatHistory.push({ role: 'model', parts: [{ text: aiResponse.text }] });
+
+            } catch (error) {
+                console.error("API Error:", error);
+                removeBubble(loadingId);
+                appendErrorMessage("عذراً، حدث خطأ أثناء الاتصال بالنظام الذكي. يرجى إعادة المحاولة.");
+            } finally {
+                isGenerating = false;
+                document.getElementById('sendBtn').disabled = false;
+                scrollToBottom();
+            }
+        }
+
+        async function callGeminiAPI(promptText) {
+            const apiKey = ""; // Runtime automatically injects key if available
+            const model = "gemini-3-flash-preview";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [
+                    ...chatHistory,
+                    { role: 'user', parts: [{ text: promptText }] }
+                ],
+                systemInstruction: {
+                    parts: [{ text: SYSTEM_INSTRUCTION }]
+                }
+            };
+
+            if (isSearchEnabled) {
+                payload.tools = [{ "google_search": {} }];
+            }
+
+            let retries = 3;
+            let delay = 1000;
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const candidate = data.candidates?.[0];
+
+                    if (!candidate || !candidate.content?.parts?.[0]?.text) {
+                        throw new Error("Invalid response format");
+                    }
+
+                    const text = candidate.content.parts[0].text;
+                    let sources = [];
+
+                    // Extract search sources if grounded
+                    const grounding = candidate.groundingMetadata;
+                    if (grounding && grounding.groundingAttributions) {
+                        sources = grounding.groundingAttributions
+                            .map(attr => ({
+                                uri: attr.web?.uri,
+                                title: attr.web?.title
+                            }))
+                            .filter(s => s.uri && s.title);
+                    }
+
+                    return { text, sources };
+
+                } catch (err) {
+                    if (i === retries - 1) throw err;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        function appendUserMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex justify-end mb-4 animate-fade-in';
+            
+            msgDiv.innerHTML = `
+                <div class="max-w-[85%] sm:max-w-[75%] bg-brand-600 text-white p-4 rounded-2xl rounded-tl-none shadow-lg">
+                    <div class="flex items-center gap-2 mb-1 text-xs text-blue-200 border-b border-blue-500/30 pb-1">
+                        <span class="font-bold">أنت</span>
+                        <i class="fa-solid fa-user text-[10px]"></i>
+                    </div>
+                    <div class="whitespace-pre-wrap text-sm sm:text-base leading-relaxed">${escapeHtml(text)}</div>
+                </div>
+            `;
+            chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function appendAIMessage(markdownText, sources = []) {
+            const chatContainer = document.getElementById('chatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex justify-start mb-4 animate-fade-in';
+
+            const parsedHtml = marked.parse(markdownText);
+            const msgId = 'ai-msg-' + Date.now();
+
+            let sourcesHtml = '';
+            if (sources && sources.length > 0) {
+                sourcesHtml = `
+                    <div class="mt-3 pt-3 border-t border-dark-border text-xs text-gray-400">
+                        <div class="font-bold mb-1 text-cyan-400 flex items-center gap-1">
+                            <i class="fa-solid fa-link"></i> مصادر البحث (Google):
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${sources.slice(0, 4).map(s => `
+                                <a href="${s.uri}" target="_blank" rel="noopener noreferrer" class="bg-dark-bg hover:bg-gray-800 border border-dark-border px-2 py-1 rounded text-gray-300 hover:text-brand-500 flex items-center gap-1 transition text-[11px] truncate max-w-[200px]">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    ${escapeHtml(s.title)}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            msgDiv.innerHTML = `
+                <div class="flex items-start gap-3 max-w-[90%] sm:max-w-[80%]">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center text-white text-sm font-black shrink-0 shadow-glow mt-1">
+                        L
+                    </div>
+                    <div class="bg-dark-card border border-dark-border text-gray-100 p-4 rounded-2xl rounded-tr-none shadow-md overflow-hidden w-full">
+                        <div class="flex items-center justify-between gap-2 mb-2 pb-1 border-b border-dark-border/50">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">LAITH AI</span>
+                                <span class="text-[10px] bg-brand-500/10 text-brand-500 px-1.5 py-0.5 rounded border border-brand-500/20">Gemini 3</span>
+                            </div>
+                            <button onclick="copyToClipboard('${msgId}')" class="text-gray-400 hover:text-white text-xs flex items-center gap-1 transition" title="نسخ النص">
+                                <i class="fa-regular fa-copy"></i>
+                                <span class="text-[10px]">نسخ</span>
+                            </button>
+                        </div>
+                        <div id="${msgId}" class="prose text-sm sm:text-base leading-relaxed break-words">
+                            ${parsedHtml}
+                        </div>
+                        ${sourcesHtml}
+                    </div>
+                </div>
+            `;
+
+            chatContainer.appendChild(msgDiv);
+            
+            // Add copy button listeners to generated code blocks
+            msgDiv.querySelectorAll('pre').forEach(pre => {
+                const btn = document.createElement('button');
+                btn.className = 'text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded absolute top-2 left-2 border border-gray-600';
+                btn.innerText = 'نسخ الكود';
+                pre.style.position = 'relative';
+                btn.onclick = () => {
+                    const code = pre.querySelector('code')?.innerText || pre.innerText;
+                    copyRawText(code);
+                };
+                pre.appendChild(btn);
+            });
+
+            scrollToBottom();
+        }
+
+        function appendLoadingBubble() {
+            const chatContainer = document.getElementById('chatContainer');
+            const id = 'loading-' + Date.now();
+            const msgDiv = document.createElement('div');
+            msgDiv.id = id;
+            msgDiv.className = 'flex justify-start mb-4';
+
+            msgDiv.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center text-white text-sm font-black shrink-0 shadow-glow animate-pulse">
+                        L
+                    </div>
+                    <div class="bg-dark-card border border-dark-border px-4 py-3 rounded-2xl rounded-tr-none flex items-center gap-2">
+                        <span class="text-xs text-gray-400 font-medium">جارِ التفكير والبحث...</span>
+                        <div class="flex items-center gap-1">
+                            <div class="w-2 h-2 bg-brand-500 rounded-full typing-dot"></div>
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full typing-dot"></div>
+                            <div class="w-2 h-2 bg-indigo-400 rounded-full typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+            return id;
+        }
+
+        function appendErrorMessage(msg) {
+            const chatContainer = document.getElementById('chatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex justify-center mb-4';
+            msgDiv.innerHTML = `
+                <div class="bg-red-500/10 border border-red-500/30 text-red-400 text-xs px-4 py-2 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>${msg}</span>
+                </div>
+            `;
+            chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function removeBubble(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            copyRawText(el.innerText);
+        }
+
+        function copyRawText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast("تم النسخ إلى الحافظة!");
+            } catch (err) {
+                console.error("Copy failed", err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
